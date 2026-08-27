@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { DayKey, Habit } from '@/types/habit';
 import type { HabitStats } from '@/types/stats';
 import { useIntensity } from '@/composables/useIntensity';
@@ -19,6 +20,10 @@ const emit = defineEmits<{
 const { single } = useIntensity();
 
 const intensityFor = (day: DayKey) => single(props.habit.id, day);
+
+const today = computed<DayKey>(() => props.days[props.days.length - 1] ?? '');
+
+const isDoneToday = computed(() => intensityFor(today.value) > 0);
 </script>
 
 <template>
@@ -26,8 +31,10 @@ const intensityFor = (day: DayKey) => single(props.habit.id, day);
     <StatsHeader
       :habit="habit"
       :stats="stats"
+      :is-done-today="isDoneToday"
       @edit="emit('edit', habit.id)"
       @delete="emit('delete', habit.id)"
+      @toggle-today="emit('toggle', habit.id, today)"
     />
     <div class="mt-3 overflow-x-auto">
       <DayGrid

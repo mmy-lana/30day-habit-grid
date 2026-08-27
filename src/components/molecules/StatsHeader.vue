@@ -10,9 +10,12 @@ import BaseBadge from '@/components/atoms/BaseBadge.vue';
 import StatTile from '@/components/atoms/StatTile.vue';
 import IconButton from '@/components/atoms/IconButton.vue';
 
-const props = withDefaults(defineProps<{ habit: Habit; stats: HabitStats }>(), {});
+const props = withDefaults(
+  defineProps<{ habit: Habit; stats: HabitStats; isDoneToday: boolean }>(),
+  {},
+);
 
-const emit = defineEmits<{ edit: []; delete: [] }>();
+const emit = defineEmits<{ edit: []; delete: []; toggleToday: [] }>();
 
 const categoryLabel = computed(
   () => CATEGORIES.find((category) => category.value === props.habit.category)?.label
@@ -20,6 +23,20 @@ const categoryLabel = computed(
 );
 
 const completionRate = computed(() => `${Math.round(props.stats.completionRate * 100)}%`);
+
+const checkinLabel = computed(() =>
+  props.isDoneToday ? '✓ Done today' : '+ Check in today',
+);
+
+const checkinAriaLabel = computed(() =>
+  props.isDoneToday ? 'Mark today as not done' : 'Mark today as done',
+);
+
+const checkinClasses = computed(() =>
+  props.isDoneToday
+    ? 'inline-flex items-center gap-1 rounded-full bg-level-4 px-3 py-1 text-xs font-medium text-gh-bg transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-level-4'
+    : 'inline-flex items-center gap-1 rounded-full border border-gh-border bg-transparent px-3 py-1 text-xs font-medium text-gh-text transition-colors hover:bg-gh-border/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-level-4',
+);
 </script>
 
 <template>
@@ -37,6 +54,15 @@ const completionRate = computed(() => `${Math.round(props.stats.completionRate *
       <ColorDot :color="CATEGORY_COLORS[habit.category]" />
       <BaseBadge :text="categoryLabel" />
     </div>
+    <button
+      type="button"
+      :aria-pressed="isDoneToday"
+      :aria-label="checkinAriaLabel"
+      :class="checkinClasses"
+      @click="emit('toggleToday')"
+    >
+      {{ checkinLabel }}
+    </button>
     <div class="ml-auto flex items-center gap-3 sm:gap-4">
       <StatTile
         label="Streak"
