@@ -1,5 +1,7 @@
 <script setup lang="ts">
-withDefaults(
+import { onMounted, ref } from 'vue';
+
+const props = withDefaults(
   defineProps<{
     modelValue: string;
     label?: string;
@@ -7,6 +9,7 @@ withDefaults(
     maxLength?: number;
     error?: string;
     id?: string;
+    autofocus?: boolean;
   }>(),
   {
     label: undefined,
@@ -14,10 +17,17 @@ withDefaults(
     maxLength: undefined,
     error: undefined,
     id: undefined,
+    autofocus: false,
   },
 );
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
+
+const inputRef = ref<HTMLInputElement | null>(null);
+
+onMounted(() => {
+  if (props.autofocus) inputRef.value?.focus();
+});
 
 function onInput(evt: Event): void {
   emit('update:modelValue', (evt.target as HTMLInputElement).value);
@@ -35,6 +45,7 @@ function onInput(evt: Event): void {
     </label>
     <input
       :id="id"
+      ref="inputRef"
       :value="modelValue"
       :placeholder="placeholder"
       :maxlength="maxLength"

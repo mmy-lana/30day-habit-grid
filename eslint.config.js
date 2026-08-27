@@ -7,8 +7,8 @@ export default withVueTs(
   {
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      // `Heading` is an intentional single-word atomic primitive (see PLAN §8.1).
-      'vue/multi-word-component-names': ['error', { ignores: ['Heading'] }],
+      // `Heading`/`Modal` are intentional single-word atomic/molecular primitives (see PLAN §8).
+      'vue/multi-word-component-names': ['error', { ignores: ['Heading', 'Modal'] }],
     },
   },
   { ignores: ['dist', 'node_modules'] },

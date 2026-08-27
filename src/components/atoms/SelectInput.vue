@@ -2,7 +2,7 @@
 withDefaults(
   defineProps<{
     modelValue: string;
-    options: { value: string; label: string }[];
+    options: readonly { value: string; label: string }[];
     label?: string;
   }>(),
   { label: undefined },
