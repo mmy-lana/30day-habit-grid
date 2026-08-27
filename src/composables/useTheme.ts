@@ -4,6 +4,10 @@ import { useHabitStore } from '@/composables/useHabitStore';
 
 const STORAGE_KEY = 'habit-grid:v1';
 
+// Shared across instances so a choice made in HomePage also disables the
+// system-preference listener registered by App.init().
+let explicitChoice = false;
+
 /**
  * Keeps the `.dark` class on `<html>` in sync with the persisted theme choice.
  * Seeds from `prefers-color-scheme` on first run (defaulting to dark) and keeps
@@ -11,7 +15,6 @@ const STORAGE_KEY = 'habit-grid:v1';
  */
 export function useTheme() {
   const store = useHabitStore();
-  let explicitChoice = false;
   let mediaQuery: MediaQueryList | null = null;
 
   const isDark: ComputedRef<boolean> = computed(() => store.theme.value === 'dark');

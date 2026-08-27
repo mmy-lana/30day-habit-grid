@@ -48,7 +48,7 @@ function statsFor(habitId: string): HabitStats {
         :habit="habit"
         :days="days"
         :stats="statsFor(habit.id)"
-        @toggle="(day) => emit('toggle', habit.id, day)"
+        @toggle="(habitId, day) => emit('toggle', habitId, day)"
         @edit="emit('edit', habit.id)"
         @delete="emit('delete', habit.id)"
       />
