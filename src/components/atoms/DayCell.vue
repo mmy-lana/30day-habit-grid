@@ -10,8 +10,9 @@ const props = withDefaults(
     label?: string;
     disabled?: boolean;
     size?: 'sm' | 'md';
+    isToday?: boolean;
   }>(),
-  { label: undefined, disabled: false, size: 'md' },
+  { label: undefined, disabled: false, size: 'md', isToday: false },
 );
 
 const emit = defineEmits<{ toggle: [date: DayKey] }>();
@@ -29,13 +30,18 @@ const cellSizeClasses = computed(() =>
 const cellClasses = computed(() => [
   cellSizeClasses.value,
   props.intensity === 0 ? 'border border-gh-border/20' : '',
+  props.isToday ? 'ring-2 ring-level-4 ring-offset-1 ring-offset-gh-panel' : '',
 ]);
 
-const resolvedLabel = computed(() => {
+const baseLabel = computed(() => {
   if (props.label != null) return props.label; // explicit caller override
   const status = props.intensity > 0 ? 'Completed' : 'Not completed';
   return `${formatFullDate(props.date)} · ${status}`;
 });
+
+const resolvedLabel = computed(() =>
+  props.isToday ? `Today — ${baseLabel.value}` : baseLabel.value,
+);
 
 function onToggle(): void {
   if (props.disabled) return;
