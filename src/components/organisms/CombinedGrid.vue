@@ -35,7 +35,7 @@ const labelFor = (day: DayKey) =>
       :level="2"
       text="All habits — last 30 days"
     />
-    <div class="mt-3 overflow-x-auto">
+    <div class="mt-3 w-full">
       <DayGrid
         :days="days"
         :intensity-for="intensityFor"

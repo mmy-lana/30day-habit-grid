@@ -36,7 +36,7 @@ const isDoneToday = computed(() => intensityFor(today.value) > 0);
       @delete="emit('delete', habit.id)"
       @toggle-today="emit('toggle', habit.id, today)"
     />
-    <div class="mt-3 overflow-x-auto">
+    <div class="mt-3 w-full">
       <DayGrid
         :days="days"
         :intensity-for="intensityFor"
