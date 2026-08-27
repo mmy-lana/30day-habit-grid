@@ -91,8 +91,8 @@ describe('DayGrid', () => {
         intensityFor: (): IntensityLevel => 0,
       },
     });
-    expect(wrapper.text()).toContain('Jul 29 · 30 days ago');
-    expect(wrapper.text()).toContain('Today · Aug 27');
+    expect(wrapper.text()).toContain('Jul 29 (30d ago)');
+    expect(wrapper.text()).toContain('Today (Aug 27)');
     expect(wrapper.find('svg[aria-hidden="true"]').exists()).toBe(true);
   });
 });

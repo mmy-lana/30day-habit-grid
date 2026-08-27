@@ -34,13 +34,13 @@ const today = computed<DayKey>(() => props.days[props.days.length - 1] ?? '');
 
 const startLabel = computed(() =>
   props.days.length > 0
-    ? `${formatMonthDay(props.days[0] ?? '')} · ${props.days.length} days ago`
+    ? `${formatMonthDay(props.days[0] ?? '')} (${props.days.length}d ago)`
     : '',
 );
 
 const endLabel = computed(() =>
   props.days.length > 0
-    ? `Today · ${formatMonthDay(props.days[props.days.length - 1] ?? '')}`
+    ? `Today (${formatMonthDay(props.days[props.days.length - 1] ?? '')})`
     : '',
 );
 
@@ -54,9 +54,9 @@ function onToggle(day: DayKey): void {
   <div>
     <div
       v-if="days.length > 0"
-      class="mb-2 flex items-center gap-2 text-xs text-gh-muted"
+      class="mb-2 flex items-center gap-2 text-xs text-gh-muted min-w-0"
     >
-      <span>{{ startLabel }}</span>
+      <span class="whitespace-nowrap shrink-0">{{ startLabel }}</span>
       <span
         class="flex-1 border-t border-gh-border/60"
         aria-hidden="true"
@@ -69,7 +69,7 @@ function onToggle(day: DayKey): void {
       >
         <path d="M1 0.5 7 4 1 7.5z" />
       </svg>
-      <span>{{ endLabel }}</span>
+      <span class="whitespace-nowrap shrink-0">{{ endLabel }}</span>
     </div>
     <div
       role="grid"
@@ -95,12 +95,13 @@ function onToggle(day: DayKey): void {
 .habit-grid {
   display: grid;
   grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
-  gap: 3px;
+  gap: 2px;
   align-items: start;
 }
 @media (min-width: 640px) {
   .habit-grid {
     --cols: var(--cols-sm, 10);
+    gap: 3px;
   }
 }
 @media (min-width: 1024px) {
