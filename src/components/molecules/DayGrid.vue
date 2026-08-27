@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { DayKey, IntensityLevel } from '@/types/habit';
-import { GRID_COLS_RESPONSIVE } from '@/constants/grid';
 import { formatMonthDay } from '@/utils/date';
 import DayCell from '@/components/atoms/DayCell.vue';
 
@@ -12,23 +11,15 @@ const props = withDefaults(
     labelFor?: (day: DayKey) => string;
     readonly?: boolean;
     ariaLabel?: string;
-    cols?: { base: number; sm: number; lg: number };
   }>(),
   {
     labelFor: undefined,
     readonly: false,
     ariaLabel: undefined,
-    cols: () => ({ ...GRID_COLS_RESPONSIVE }),
   },
 );
 
 const emit = defineEmits<{ toggle: [day: DayKey] }>();
-
-const gridStyle = computed(() => ({
-  '--cols': String(props.cols.base),
-  '--cols-sm': String(props.cols.sm),
-  '--cols-lg': String(props.cols.lg),
-}));
 
 const today = computed<DayKey>(() => props.days[props.days.length - 1] ?? '');
 
@@ -51,7 +42,7 @@ function onToggle(day: DayKey): void {
 </script>
 
 <template>
-  <div>
+  <div class="w-fit">
     <div
       v-if="days.length > 0"
       class="mb-2 flex items-center gap-2 text-xs text-gh-muted min-w-0"
@@ -74,8 +65,8 @@ function onToggle(day: DayKey): void {
     <div
       role="grid"
       :aria-label="ariaLabel ?? 'Last 30 days'"
-      :class="readonly ? 'habit-grid pointer-events-none' : 'habit-grid'"
-      :style="gridStyle"
+      class="grid grid-cols-6 sm:grid-cols-10 lg:grid-cols-15 gap-1.5 sm:gap-2 w-fit"
+      :class="readonly ? 'pointer-events-none' : ''"
     >
       <DayCell
         v-for="day in days"
@@ -90,23 +81,3 @@ function onToggle(day: DayKey): void {
     </div>
   </div>
 </template>
-
-<style scoped>
-.habit-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
-  gap: 2px;
-  align-items: start;
-}
-@media (min-width: 640px) {
-  .habit-grid {
-    --cols: var(--cols-sm, 10);
-    gap: 3px;
-  }
-}
-@media (min-width: 1024px) {
-  .habit-grid {
-    --cols: var(--cols-lg, 15);
-  }
-}
-</style>
