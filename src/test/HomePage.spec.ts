@@ -10,6 +10,7 @@ const CELL_SELECTOR = 'button[role="button"][aria-pressed]';
 
 function habitGridCells(wrapper: VueWrapper, habitName = 'Morning run'): DOMWrapper<Element>[] {
   const grid = wrapper.find(`[aria-label="${habitName} — last 30 days"]`);
+  if (!grid.exists()) return [];
   return grid.findAll(CELL_SELECTOR);
 }
 
@@ -144,6 +145,92 @@ describe('HomePage smoke', () => {
     expect(donePill.exists()).toBe(true);
     expect(donePill.text()).toBe('✓ Done today');
     expect(donePill.attributes('aria-pressed')).toBe('true');
+
+    wrapper.unmount();
+  });
+});
+
+describe('HomePage category filter', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it('filtering by a non-matching category shows the filter empty state', async () => {
+    const wrapper = await mountHomePage();
+
+    const newHabitButton = wrapper.findAll('button').find((button) => button.text() === 'New habit');
+    if (newHabitButton) await newHabitButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(document.body.querySelector('#habit-name')).not.toBeNull();
+    });
+    await submitHabitForm('Read');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+
+    const fitnessPill = wrapper.findAll('button').find((button) => button.text() === 'Fitness');
+    if (fitnessPill) await fitnessPill.trigger('click');
+
+    expect(habitGridCells(wrapper, 'Read')).toHaveLength(0);
+    expect(wrapper.text()).toContain('No habits found');
+    const showAllButton = wrapper.findAll('button').find((button) => button.text() === 'Show all habits');
+    expect(showAllButton).toBeTruthy();
+
+    wrapper.unmount();
+  });
+
+  it('filtering by the matching category keeps the habit visible', async () => {
+    const wrapper = await mountHomePage();
+
+    const newHabitButton = wrapper.findAll('button').find((button) => button.text() === 'New habit');
+    if (newHabitButton) await newHabitButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(document.body.querySelector('#habit-name')).not.toBeNull();
+    });
+    await submitHabitForm('Read');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+
+    const healthPill = wrapper.findAll('button').find((button) => button.text() === 'Health');
+    if (healthPill) await healthPill.trigger('click');
+
+    expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+
+    wrapper.unmount();
+  });
+
+  it("clicking 'Show all habits' clears the filter and restores the list", async () => {
+    const wrapper = await mountHomePage();
+
+    const newHabitButton = wrapper.findAll('button').find((button) => button.text() === 'New habit');
+    if (newHabitButton) await newHabitButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(document.body.querySelector('#habit-name')).not.toBeNull();
+    });
+    await submitHabitForm('Read');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+
+    const fitnessPill = wrapper.findAll('button').find((button) => button.text() === 'Fitness');
+    if (fitnessPill) await fitnessPill.trigger('click');
+
+    const showAllButton = wrapper.findAll('button').find((button) => button.text() === 'Show all habits');
+    if (showAllButton) await showAllButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+    const allPill = wrapper.findAll('button').find((button) => button.text() === 'All');
+    expect(allPill?.attributes('aria-pressed')).toBe('true');
 
     wrapper.unmount();
   });

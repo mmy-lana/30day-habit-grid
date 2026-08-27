@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import type { DayKey, Habit, HabitInput } from '@/types/habit';
+import type { DayKey, Habit, HabitCategory, HabitInput } from '@/types/habit';
 import type { GlobalStats } from '@/types/stats';
 import type { HabitStoreState } from '@/types/store';
 import { useHabitStore } from '@/composables/useHabitStore';
@@ -14,7 +14,7 @@ import HabitList from '@/components/organisms/HabitList.vue';
 import Modal from '@/components/molecules/Modal.vue';
 import ConfirmDialog from '@/components/molecules/ConfirmDialog.vue';
 import HabitForm from '@/components/molecules/HabitForm.vue';
-import LegendBar from '@/components/molecules/LegendBar.vue';
+import CategoryFilterBar from '@/components/molecules/CategoryFilterBar.vue';
 import StatTile from '@/components/atoms/StatTile.vue';
 
 const store = useHabitStore();
@@ -22,6 +22,14 @@ const { dayKeys } = useDateGrid(GRID_DAYS);
 const { isDark, toggleTheme } = useTheme();
 
 const globalStats = computed<GlobalStats>(() => store.globalStats(dayKeys.value));
+
+const selectedCategory = ref<'all' | HabitCategory>('all');
+
+const filteredHabits = computed<Habit[]>(() =>
+  selectedCategory.value === 'all'
+    ? store.habits.value
+    : store.habits.value.filter((habit) => habit.category === selectedCategory.value),
+);
 
 const modalState = reactive<{ mode: 'closed' | 'add' | 'edit'; id?: string }>({
   mode: 'closed',
@@ -141,19 +149,23 @@ function cancelImport(): void {
     />
   </div>
 
+  <CategoryFilterBar
+    v-if="store.habits.value.length > 0"
+    v-model="selectedCategory"
+    class="mt-4"
+  />
+
   <div class="mt-4">
     <HabitList
-      :habits="store.habits.value"
+      :habits="filteredHabits"
       :days="dayKeys"
+      :category-filter="selectedCategory"
       @toggle="handleToggle"
       @edit="openEdit"
       @delete="handleDelete"
       @add="openAdd"
+      @clear-filter="selectedCategory = 'all'"
     />
-  </div>
-
-  <div class="mt-6 flex justify-end">
-    <LegendBar />
   </div>
 
   <Modal
