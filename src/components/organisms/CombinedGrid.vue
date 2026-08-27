@@ -29,13 +29,13 @@ const labelFor = (day: DayKey) =>
 <template>
   <section
     v-if="totalHabits > 0"
-    class="rounded-lg border border-gh-border bg-gh-panel p-4"
+    class="rounded-lg border border-gh-border bg-gh-panel p-4 sm:p-5"
   >
     <Heading
       :level="2"
       text="All habits — last 30 days"
     />
-    <div class="mt-3 w-full">
+    <div class="mt-3">
       <DayGrid
         :days="days"
         :intensity-for="intensityFor"

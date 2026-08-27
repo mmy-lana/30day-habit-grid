@@ -27,7 +27,7 @@ const isDoneToday = computed(() => intensityFor(today.value) > 0);
 </script>
 
 <template>
-  <section class="rounded-lg border border-gh-border bg-gh-panel p-4">
+  <section class="rounded-lg border border-gh-border bg-gh-panel p-4 sm:p-5">
     <StatsHeader
       :habit="habit"
       :stats="stats"
@@ -36,7 +36,7 @@ const isDoneToday = computed(() => intensityFor(today.value) > 0);
       @delete="emit('delete', habit.id)"
       @toggle-today="emit('toggle', habit.id, today)"
     />
-    <div class="mt-3 w-full">
+    <div class="mt-3">
       <DayGrid
         :days="days"
         :intensity-for="intensityFor"
