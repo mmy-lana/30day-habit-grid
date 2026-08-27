@@ -64,8 +64,9 @@ describe('StatsHeader', () => {
       props: { habit, stats, isDoneToday: true },
     });
     const doneClasses = done.find('button[aria-label="Mark today as not done"]').attributes('class') ?? '';
-    expect(doneClasses).toContain('bg-level-4');
-    expect(doneClasses).toContain('text-gh-bg');
+    expect(doneClasses).toContain('bg-level-4/15');
+    expect(doneClasses).toContain('text-level-4');
+    expect(doneClasses).not.toContain('text-gh-bg');
     expect(doneClasses).not.toContain('border-gh-border');
   });
 });

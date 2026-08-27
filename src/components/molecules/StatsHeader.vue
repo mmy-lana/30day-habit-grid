@@ -34,7 +34,7 @@ const checkinAriaLabel = computed(() =>
 
 const checkinClasses = computed(() =>
   props.isDoneToday
-    ? 'inline-flex items-center gap-1 rounded-full bg-level-4 px-3 py-1 text-xs font-medium text-gh-bg transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-level-4'
+    ? 'inline-flex items-center gap-1 rounded-full bg-level-4/15 text-level-4 border border-level-4/30 hover:bg-level-4/25 px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-level-4'
     : 'inline-flex items-center gap-1 rounded-full border border-gh-border bg-transparent px-3 py-1 text-xs font-medium text-gh-text transition-colors hover:bg-gh-border/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-level-4',
 );
 </script>
@@ -44,25 +44,33 @@ const checkinClasses = computed(() =>
     <div class="flex min-w-0 items-center gap-2">
       <span
         v-if="habit.emoji"
-        class="text-xl"
+        class="shrink-0 text-xl"
         aria-hidden="true"
       >{{ habit.emoji }}</span>
       <Heading
         :level="3"
         :text="habit.name"
+        class="min-w-0 truncate"
+        :title="habit.name"
       />
-      <ColorDot :color="CATEGORY_COLORS[habit.category]" />
-      <BaseBadge :text="categoryLabel" />
+      <ColorDot
+        :color="CATEGORY_COLORS[habit.category]"
+        class="shrink-0"
+      />
+      <BaseBadge
+        :text="categoryLabel"
+        class="shrink-0"
+      />
+      <button
+        type="button"
+        :aria-pressed="isDoneToday"
+        :aria-label="checkinAriaLabel"
+        :class="checkinClasses"
+        @click="emit('toggleToday')"
+      >
+        {{ checkinLabel }}
+      </button>
     </div>
-    <button
-      type="button"
-      :aria-pressed="isDoneToday"
-      :aria-label="checkinAriaLabel"
-      :class="checkinClasses"
-      @click="emit('toggleToday')"
-    >
-      {{ checkinLabel }}
-    </button>
     <div class="ml-auto flex items-center gap-3 sm:gap-4">
       <StatTile
         label="Streak"
