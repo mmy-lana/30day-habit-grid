@@ -66,7 +66,7 @@ function onKeydown(evt: KeyboardEvent): void {
     :aria-label="resolvedLabel"
     :aria-pressed="intensity > 0"
     :disabled="disabled"
-    class="-m-1.5 rounded p-1.5 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-level-4"
+    class="flex items-center justify-center p-0.5 w-full aspect-square rounded cursor-pointer touch-manipulation focus-visible:outline-2 focus-visible:outline-level-4"
     @click="onToggle"
     @keydown="onKeydown"
   >
