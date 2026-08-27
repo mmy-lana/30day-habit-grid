@@ -19,7 +19,8 @@ export function useLocalStorage<T>(
     if (typeof initial === 'function') {
       return (initial as unknown as () => T)();
     }
-    return initial;
+    // Clone so mutations on the reactive ref never leak into shared constant objects.
+    return structuredClone(initial);
   };
 
   const readStored = (): T | null => {
