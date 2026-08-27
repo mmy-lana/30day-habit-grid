@@ -131,10 +131,19 @@ function createStore() {
     state.value.theme = state.value.theme === 'dark' ? 'light' : 'dark';
   }
 
+  function importState(newState: HabitStoreState): void {
+    state.value = {
+      habits: Array.isArray(newState.habits) ? [...newState.habits] : [],
+      completions: { ...newState.completions },
+      theme: newState.theme === 'light' || newState.theme === 'dark' ? newState.theme : 'dark',
+    };
+  }
+
   return {
     habits: computed(() => state.value.habits),
     completions: computed(() => state.value.completions),
     theme: computed(() => state.value.theme),
+    state: computed<HabitStoreState>(() => state.value),
     getHabit,
     isDone,
     habitStats,
@@ -147,6 +156,7 @@ function createStore() {
     clearAll,
     setTheme,
     toggleTheme,
+    importState,
   };
 }
 

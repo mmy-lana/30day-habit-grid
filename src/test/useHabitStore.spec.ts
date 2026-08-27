@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DayKey } from '@/types/habit';
+import type { HabitStoreState } from '@/types/store';
 import { lastNDays } from '@/utils/date';
 
 const days: DayKey[] = lastNDays(30, new Date(2026, 7, 27));
@@ -138,5 +139,41 @@ describe('useHabitStore', () => {
     expect(store.habits.value).toHaveLength(0);
     expect(store.completions.value).toEqual({});
     expect(store.theme.value).toBe('dark');
+  });
+
+  it('importState replaces state and persists across a simulated reload', async () => {
+    const store = await loadStore();
+    const fixture: HabitStoreState = {
+      habits: [
+        {
+          id: 'fixture-1',
+          name: 'Imported A',
+          category: 'health',
+          createdAt: '2026-08-01T00:00:00.000Z',
+        },
+        {
+          id: 'fixture-2',
+          name: 'Imported B',
+          category: 'fitness',
+          createdAt: '2026-08-02T00:00:00.000Z',
+          emoji: '🏃',
+        },
+      ],
+      completions: { 'fixture-1': { '2026-08-26': true } },
+      theme: 'light',
+    };
+
+    store.importState(fixture);
+    expect(store.habits.value).toEqual(fixture.habits);
+    expect(store.theme.value).toBe('light');
+    expect(store.isDone('fixture-1', '2026-08-26')).toBe(true);
+
+    await flushWrites();
+    vi.resetModules();
+    const { useHabitStore: reloaded } = await import('@/composables/useHabitStore');
+    const store2 = reloaded();
+    expect(store2.habits.value).toEqual(fixture.habits);
+    expect(store2.theme.value).toBe('light');
+    expect(store2.isDone('fixture-1', '2026-08-26')).toBe(true);
   });
 });
