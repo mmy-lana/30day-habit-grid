@@ -49,4 +49,19 @@ describe('HabitCard', () => {
     await deleteButton.trigger('click');
     expect(wrapper.emitted('delete')?.[0]).toEqual(['habit-1']);
   });
+
+  it('renders the check-in pill in the not-done state', () => {
+    const wrapper = mount(HabitCard, { props: { habit, days, stats } });
+    const pill = wrapper.find('button[aria-label="Mark today as done"]');
+    expect(pill.exists()).toBe(true);
+    expect(pill.text()).toBe('+ Check in today');
+    expect(pill.attributes('aria-pressed')).toBe('false');
+  });
+
+  it("clicking the check-in pill emits toggle with habit id and today's key", async () => {
+    const wrapper = mount(HabitCard, { props: { habit, days, stats } });
+    const pill = wrapper.find('button[aria-label="Mark today as done"]');
+    await pill.trigger('click');
+    expect(wrapper.emitted('toggle')?.[0]).toEqual(['habit-1', days[29]]);
+  });
 });

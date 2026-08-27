@@ -57,4 +57,42 @@ describe('DayGrid', () => {
     if (target) await target.trigger('click');
     expect(wrapper.emitted('toggle')).toBeUndefined();
   });
+
+  it('marks the last cell as today and no others', () => {
+    const wrapper = mount(DayGrid, {
+      props: {
+        days,
+        intensityFor: (): IntensityLevel => 0,
+      },
+    });
+    const cells = wrapper.findAllComponents(DayCell);
+    expect(cells[29]?.props('isToday')).toBe(true);
+    for (let i = 0; i < 29; i++) {
+      expect(cells[i]?.props('isToday')).toBe(false);
+    }
+  });
+
+  it("prefixes today's cell tooltip with 'Today — '", () => {
+    const wrapper = mount(DayGrid, {
+      props: {
+        days,
+        intensityFor: (): IntensityLevel => 0,
+      },
+    });
+    const cells = wrapper.findAllComponents(DayCell);
+    expect(cells[29]?.attributes('title')).toMatch(/^Today — .*· Not completed$/);
+    expect(cells[0]?.attributes('title')).not.toMatch(/^Today — /);
+  });
+
+  it('renders the 30-day timeline labels', () => {
+    const wrapper = mount(DayGrid, {
+      props: {
+        days,
+        intensityFor: (): IntensityLevel => 0,
+      },
+    });
+    expect(wrapper.text()).toContain('Jul 29 · 30 days ago');
+    expect(wrapper.text()).toContain('Today · Aug 27');
+    expect(wrapper.find('svg[aria-hidden="true"]').exists()).toBe(true);
+  });
 });

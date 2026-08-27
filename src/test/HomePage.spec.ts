@@ -117,4 +117,34 @@ describe('HomePage smoke', () => {
 
     wrapper.unmount();
   });
+
+  it("clicking the check-in pill toggles today's cell and flips the pill label", async () => {
+    const wrapper = await mountHomePage();
+
+    const newHabitButton = wrapper.findAll('button').find((button) => button.text() === 'New habit');
+    if (newHabitButton) await newHabitButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(document.body.querySelector('#habit-name')).not.toBeNull();
+    });
+    await submitHabitForm('Read');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+
+    const pill = wrapper.find('button[aria-label="Mark today as done"]');
+    expect(pill.exists()).toBe(true);
+    await pill.trigger('click');
+
+    const cells = habitGridCells(wrapper, 'Read');
+    expect(cells[29]?.attributes('aria-pressed')).toBe('true');
+
+    const donePill = wrapper.find('button[aria-label="Mark today as not done"]');
+    expect(donePill.exists()).toBe(true);
+    expect(donePill.text()).toBe('✓ Done today');
+    expect(donePill.attributes('aria-pressed')).toBe('true');
+
+    wrapper.unmount();
+  });
 });
