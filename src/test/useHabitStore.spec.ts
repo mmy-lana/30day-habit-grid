@@ -58,7 +58,7 @@ describe('useHabitStore', () => {
     store.setDay(habit.id, today, false);
     expect(store.isDone(habit.id, today)).toBe(false);
     expect(store.isDone(habit.id, yesterday)).toBe(true);
-    expect(store.habitStats(habit.id, days).currentStreak).toBe(0);
+    expect(store.habitStats(habit.id, days).currentStreak).toBe(1);
   });
 
   it('globalStats aggregates across habits', async () => {

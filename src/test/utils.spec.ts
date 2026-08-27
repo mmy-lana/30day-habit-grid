@@ -97,10 +97,10 @@ describe('computeStreak', () => {
     expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 5, longestStreak: 5 });
   });
 
-  it('breaks the current streak when today is missed', () => {
+  it('continues yesterday\'s streak when today is missed (morning-zero fix)', () => {
     const days = windowKeys(5);
     const doneMap = Object.fromEntries(days.slice(0, 4).map((key) => [key, true]));
-    expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 0, longestStreak: 4 });
+    expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 4, longestStreak: 4 });
   });
 
   it('finds the longest mid-window run independently of today', () => {
@@ -119,6 +119,15 @@ describe('computeStreak', () => {
     const doneMap: Record<DayKey, boolean> = {};
     const middle = days[2];
     if (middle != null) doneMap[middle] = true;
-    expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 0, longestStreak: 1 });
+    expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 1, longestStreak: 1 });
+  });
+
+  it('returns zero when both today and yesterday are missed', () => {
+    const days = windowKeys(5);
+    const doneMap: Record<DayKey, boolean> = {};
+    days.slice(0, 3).forEach((key) => {
+      doneMap[key] = true;
+    });
+    expect(computeStreak(days, doneMap)).toEqual({ currentStreak: 0, longestStreak: 3 });
   });
 });

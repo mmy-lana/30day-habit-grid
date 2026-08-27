@@ -25,11 +25,19 @@ export function useLocalStorage<T>(
 
   const readStored = (): T | null => {
     if (typeof localStorage === 'undefined') return null;
+    let raw: string | null = null;
     try {
-      const raw = localStorage.getItem(storageKey);
+      raw = localStorage.getItem(storageKey);
       if (raw == null) return null;
       return JSON.parse(raw) as T;
     } catch {
+      if (raw != null) {
+        try {
+          localStorage.setItem(`${storageKey}_corrupt_backup`, raw);
+        } catch {
+          // Best-effort backup; storage may be disabled or full.
+        }
+      }
       // Corrupt or unparseable payload — fall back to the initial value.
       return null;
     }
@@ -41,8 +49,8 @@ export function useLocalStorage<T>(
     if (typeof localStorage === 'undefined') return;
     try {
       localStorage.setItem(storageKey, JSON.stringify(value.value));
-    } catch {
-      // Storage quota exceeded or serialization failure — persistence is best-effort.
+    } catch (err) {
+      console.warn('habit-grid: persistence write failed', err);
     }
   };
 
