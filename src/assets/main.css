@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* class-based dark mode (Tailwind v4 custom variant) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --gh-bg:       #ffffff;
+  --gh-panel:    #ffffff;
+  --gh-border:   #d0d7de;
+  --gh-text:     #1f2328;
+  --gh-muted:    #656d76;
+  --gh-level-0:  #ebedf0;   /* none          */
+  --gh-level-1:  #9be9a8;   /* 1            */
+  --gh-level-2:  #40c463;   /* 2            */
+  --gh-level-3:  #30a14e;   /* 3            */
+  --gh-level-4:  #216e39;   /* 4 (max)      */
+}
+.dark {
+  --gh-bg:       #0d1117;
+  --gh-panel:    #161b22;
+  --gh-border:   #30363d;
+  --gh-text:     #c9d1d9;
+  --gh-muted:    #8b949e;
+  --gh-level-0:  #161b22;
+  --gh-level-1:  #0e4429;
+  --gh-level-2:  #006d32;
+  --gh-level-3:  #26a641;
+  --gh-level-4:  #39d353;
+}
+
+/* expose CSS vars as Tailwind color utilities: bg-gh-bg, text-gh-text, bg-level-3, etc. */
+@theme inline {
+  --color-gh-bg:      var(--gh-bg);
+  --color-gh-panel:   var(--gh-panel);
+  --color-gh-border:  var(--gh-border);
+  --color-gh-text:    var(--gh-text);
+  --color-gh-muted:   var(--gh-muted);
+  --color-level-0:    var(--gh-level-0);
+  --color-level-1:    var(--gh-level-1);
+  --color-level-2:    var(--gh-level-2);
+  --color-level-3:    var(--gh-level-3);
+  --color-level-4:    var(--gh-level-4);
+}
+
+@layer base {
+  html { background-color: var(--gh-bg); color: var(--gh-text); }
+  body { @apply min-h-dvh antialiased; }
+}
