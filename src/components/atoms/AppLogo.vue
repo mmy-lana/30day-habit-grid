@@ -1,0 +1,85 @@
+<script setup lang="ts"></script>
+
+<template>
+  <div class="flex select-none items-center gap-2">
+    <svg
+      viewBox="0 0 12 12"
+      class="h-6 w-6 shrink-0"
+      aria-hidden="true"
+    >
+      <rect
+        x="0"
+        y="0"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-1)"
+      />
+      <rect
+        x="4.3"
+        y="0"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-4)"
+      />
+      <rect
+        x="8.6"
+        y="0"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-2)"
+      />
+      <rect
+        x="0"
+        y="4.3"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-3)"
+      />
+      <rect
+        x="4.3"
+        y="4.3"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-0)"
+      />
+      <rect
+        x="8.6"
+        y="4.3"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-4)"
+      />
+      <rect
+        x="0"
+        y="8.6"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-2)"
+      />
+      <rect
+        x="4.3"
+        y="8.6"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-1)"
+      />
+      <rect
+        x="8.6"
+        y="8.6"
+        width="3.4"
+        height="3.4"
+        rx="1"
+        fill="var(--gh-level-3)"
+      />
+    </svg>
+    <span class="text-base font-semibold text-gh-text">30-Day Habit Grid</span>
+  </div>
+</template>
