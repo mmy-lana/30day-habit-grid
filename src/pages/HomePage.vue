@@ -2,9 +2,11 @@
 import { computed, reactive, ref } from 'vue';
 import type { DayKey, Habit, HabitInput } from '@/types/habit';
 import type { GlobalStats } from '@/types/stats';
+import type { HabitStoreState } from '@/types/store';
 import { useHabitStore } from '@/composables/useHabitStore';
 import { useDateGrid } from '@/composables/useDateGrid';
 import { useTheme } from '@/composables/useTheme';
+import { exportBackup, readBackupFile } from '@/utils/backup';
 import { GRID_DAYS } from '@/constants/grid';
 import AppHeader from '@/components/organisms/AppHeader.vue';
 import CombinedGrid from '@/components/organisms/CombinedGrid.vue';
@@ -26,6 +28,7 @@ const modalState = reactive<{ mode: 'closed' | 'add' | 'edit'; id?: string }>({
 });
 
 const confirmDeleteId = ref<string | null>(null);
+const pendingImport = ref<HabitStoreState | null>(null);
 
 const modalOpen = computed(() => modalState.mode !== 'closed');
 
@@ -74,6 +77,32 @@ function confirmDelete(): void {
   if (confirmDeleteId.value != null) store.deleteHabit(confirmDeleteId.value);
   confirmDeleteId.value = null;
 }
+
+function handleExport(): void {
+  exportBackup(store.state.value);
+}
+
+async function handleImportFile(file: File): Promise<void> {
+  try {
+    const parsed = await readBackupFile(file);
+    if (store.habits.value.length > 0) {
+      pendingImport.value = parsed; // gate overwrite behind ConfirmDialog
+    } else {
+      store.importState(parsed);
+    }
+  } catch (err) {
+    console.warn('habit-grid: import failed', err);
+  }
+}
+
+function confirmImport(): void {
+  if (pendingImport.value != null) store.importState(pendingImport.value);
+  pendingImport.value = null;
+}
+
+function cancelImport(): void {
+  pendingImport.value = null;
+}
 </script>
 
 <template>
@@ -82,6 +111,8 @@ function confirmDelete(): void {
     :is-dark="isDark"
     @toggle-theme="toggleTheme"
     @add-habit="openAdd"
+    @export-data="handleExport"
+    @import-file="handleImportFile"
   />
 
   <CombinedGrid
@@ -145,5 +176,14 @@ function confirmDelete(): void {
     danger
     @confirm="confirmDelete"
     @cancel="confirmDeleteId = null"
+  />
+
+  <ConfirmDialog
+    :open="pendingImport != null"
+    title="Import backup?"
+    message="Importing this backup will overwrite your current habits and check-in history. Do you want to continue?"
+    confirm-text="Import"
+    @confirm="confirmImport"
+    @cancel="cancelImport"
   />
 </template>

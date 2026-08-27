@@ -8,8 +8,8 @@ const flushWrites = (): Promise<void> => new Promise((resolve) => setTimeout(res
 
 const CELL_SELECTOR = 'button[role="button"][aria-pressed]';
 
-function habitGridCells(wrapper: VueWrapper): DOMWrapper<Element>[] {
-  const grid = wrapper.find('[aria-label="Morning run — last 30 days"]');
+function habitGridCells(wrapper: VueWrapper, habitName = 'Morning run'): DOMWrapper<Element>[] {
+  const grid = wrapper.find(`[aria-label="${habitName} — last 30 days"]`);
   return grid.findAll(CELL_SELECTOR);
 }
 
@@ -82,5 +82,39 @@ describe('HomePage smoke', () => {
     expect(cells2[cells2.length - 1]?.attributes('aria-pressed')).toBe('true');
 
     wrapper2.unmount();
+  });
+
+  it('toggling today off after a yesterday completion keeps yesterday\'s streak (morning-zero fix)', async () => {
+    const wrapper = await mountHomePage();
+
+    const newHabitButton = wrapper.findAll('button').find((button) => button.text() === 'New habit');
+    if (newHabitButton) await newHabitButton.trigger('click');
+
+    await vi.waitFor(() => {
+      expect(document.body.querySelector('#habit-name')).not.toBeNull();
+    });
+    await submitHabitForm('Read');
+
+    await vi.waitFor(() => {
+      expect(habitGridCells(wrapper, 'Read')).toHaveLength(30);
+    });
+
+    const cells = habitGridCells(wrapper, 'Read');
+    const yesterdayCell = cells[cells.length - 2];
+    const todayCell = cells[cells.length - 1];
+    if (yesterdayCell) await yesterdayCell.trigger('click'); // yesterday -> on
+    if (todayCell) await todayCell.trigger('click'); // today -> on (streak 2)
+    if (todayCell) await todayCell.trigger('click'); // today -> off
+
+    const { useHabitStore } = await import('@/composables/useHabitStore');
+    const store = useHabitStore();
+    const habitId = store.habits.value[0]?.id;
+    expect(habitId).toBeTruthy();
+    const days: DayKey[] = lastNDays(30, new Date());
+    const stats = habitId ? store.habitStats(habitId, days) : null;
+    expect(stats?.currentStreak).toBe(1); // yesterday's run continues
+    expect(stats?.totalCompletions).toBe(1);
+
+    wrapper.unmount();
   });
 });

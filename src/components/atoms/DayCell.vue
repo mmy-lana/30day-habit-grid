@@ -26,7 +26,16 @@ const cellSizeClasses = computed(() =>
     : 'h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4',
 );
 
-const resolvedLabel = computed(() => props.label ?? formatFullDate(props.date));
+const cellClasses = computed(() => [
+  cellSizeClasses.value,
+  props.intensity === 0 ? 'border border-gh-border/20' : '',
+]);
+
+const resolvedLabel = computed(() => {
+  if (props.label != null) return props.label; // explicit caller override
+  const status = props.intensity > 0 ? 'Completed' : 'Not completed';
+  return `${formatFullDate(props.date)} · ${status}`;
+});
 
 function onToggle(): void {
   if (props.disabled) return;
@@ -58,7 +67,7 @@ function onKeydown(evt: KeyboardEvent): void {
     <span
       aria-hidden="true"
       class="block rounded-[2px] transition-transform hover:scale-110"
-      :class="cellSizeClasses"
+      :class="cellClasses"
       :style="cellStyle"
     />
   </button>
