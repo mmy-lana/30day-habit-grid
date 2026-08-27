@@ -47,3 +47,8 @@ export function formatFullDate(key: DayKey): string {
   const date = parseDateKey(key);
   return `${weekdayShort(key)}, ${monthShort(key)} ${date.getDate()} ${date.getFullYear()}`;
 }
+
+/** e.g. `Aug 27` — short month + day-of-month, no year (for compact timeline labels). */
+export function formatMonthDay(key: DayKey): string {
+  return `${monthShort(key)} ${parseDateKey(key).getDate()}`;
+}
