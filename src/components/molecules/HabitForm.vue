@@ -2,6 +2,7 @@
 import { computed, reactive, watch } from 'vue';
 import type { Habit, HabitCategory, HabitInput } from '@/types/habit';
 import { CATEGORIES } from '@/constants/habits';
+import { sanitizeText } from '@/utils/text';
 import BaseButton from '@/components/atoms/BaseButton.vue';
 import TextInput from '@/components/atoms/TextInput.vue';
 import SelectInput from '@/components/atoms/SelectInput.vue';
@@ -28,7 +29,7 @@ watch(
   },
 );
 
-const error = computed(() => (form.name.trim().length === 0 ? 'Name is required.' : undefined));
+const error = computed(() => (sanitizeText(form.name, 40).length === 0 ? 'Name is required.' : undefined));
 const canSubmit = computed(() => error.value == null);
 
 function onCategoryChange(value: string): void {
@@ -39,7 +40,7 @@ function onCategoryChange(value: string): void {
 function onSubmit(): void {
   if (!canSubmit.value) return;
   emit('submit', {
-    name: form.name.trim(),
+    name: sanitizeText(form.name, 40),
     category: form.category,
     emoji: form.emoji,
   });

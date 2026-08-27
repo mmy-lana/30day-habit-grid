@@ -9,6 +9,7 @@ import {
   weekdayShort,
 } from '@/utils/date';
 import { createId } from '@/utils/id';
+import { sanitizeText } from '@/utils/text';
 import { combinedIntensity, singleHabitIntensity } from '@/utils/intensity';
 import { computeStreak } from '@/composables/useStreak';
 import type { DayKey } from '@/types/habit';
@@ -63,6 +64,28 @@ describe('id utils', () => {
     const second = createId();
     expect(first).not.toBe(second);
     expect(first.length).toBeGreaterThan(0);
+  });
+});
+
+describe('text utils', () => {
+  it('sanitizeText trims whitespace', () => {
+    expect(sanitizeText('  hi  ', 10)).toBe('hi');
+  });
+
+  it('sanitizeText strips control chars', () => {
+    expect(sanitizeText('a\x00b\x1Fc\x7Fd', 10)).toBe('abcd');
+  });
+
+  it('sanitizeText hard-caps length', () => {
+    expect(sanitizeText('abcdefghij', 5)).toBe('abcde');
+  });
+
+  it('sanitizeText applies strip -> trim -> slice in order', () => {
+    expect(sanitizeText(' \x00 hi \x00 ', 10)).toBe('hi');
+  });
+
+  it('sanitizeText leaves normal text intact', () => {
+    expect(sanitizeText('Morning run', 40)).toBe('Morning run');
   });
 });
 
