@@ -9,10 +9,9 @@ const props = withDefaults(
     date: DayKey;
     label?: string;
     disabled?: boolean;
-    size?: 'sm' | 'md';
     isToday?: boolean;
   }>(),
-  { label: undefined, disabled: false, size: 'md', isToday: false },
+  { label: undefined, disabled: false, isToday: false },
 );
 
 const emit = defineEmits<{ toggle: [date: DayKey] }>();
@@ -21,14 +20,7 @@ const cellStyle = computed(() => ({
   backgroundColor: `var(--gh-level-${props.intensity})`,
 }));
 
-const cellSizeClasses = computed(() =>
-  props.size === 'sm'
-    ? 'h-2.5 w-2.5 sm:h-3 sm:w-3 lg:h-3.5 lg:w-3.5'
-    : 'h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4',
-);
-
 const cellClasses = computed(() => [
-  cellSizeClasses.value,
   props.intensity === 0 ? 'border border-gh-border/20' : '',
   props.isToday ? 'ring-2 ring-level-4 ring-offset-1 ring-offset-gh-panel' : '',
 ]);
@@ -66,15 +58,10 @@ function onKeydown(evt: KeyboardEvent): void {
     :aria-label="resolvedLabel"
     :aria-pressed="intensity > 0"
     :disabled="disabled"
-    class="flex items-center justify-center p-0.5 w-full aspect-square rounded cursor-pointer touch-manipulation focus-visible:outline-2 focus-visible:outline-level-4"
+    class="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-[4px] cursor-pointer touch-manipulation transition-transform hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-level-4"
+    :class="cellClasses"
+    :style="cellStyle"
     @click="onToggle"
     @keydown="onKeydown"
-  >
-    <span
-      aria-hidden="true"
-      class="block rounded-[2px] transition-transform hover:scale-110"
-      :class="cellClasses"
-      :style="cellStyle"
-    />
-  </button>
+  />
 </template>
