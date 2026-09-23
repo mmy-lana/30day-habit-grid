@@ -97,7 +97,7 @@ src/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/30day-habit-grid.git
+   git clone https://github.com/mmy-lana/30day-habit-grid.git
    cd 30day-habit-grid
    ```
 
